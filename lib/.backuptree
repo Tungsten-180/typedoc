@@ -1,0 +1,98 @@
+type 'a tree = Node of 'a * 'a tree * 'a tree | Leaf
+
+let dfs t =
+  let rec aux tree acc =
+    match tree with
+    | Leaf -> acc
+    | Node (value, left, right) ->
+        let acc_with_left = aux left (value :: acc) in
+        aux right acc_with_left
+  in
+  aux t []
+
+let typedec =
+  Node
+    ( Tokens.TYPE,
+      Node
+        ( Tokens.IDENT "",
+          Node
+            ( Tokens.EQUAL,
+              Node (Tokens.LEFTBRACKET, Leaf, Leaf),
+              Node (Tokens.TYP Tokens.ANY, Leaf, Leaf) ),
+          Leaf ),
+      Leaf )
+
+let typedvaldec =
+  Node
+    ( Tokens.TYPE,
+      Node
+        ( Tokens.IDENT "",
+          Node
+            ( Tokens.COLON,
+              Node
+                ( Tokens.TYP Tokens.ANY,
+                  Node
+                    ( Tokens.EQUAL,
+                      Node (Tokens.VAL [], Leaf, Leaf),
+                      Node (Tokens.LEFTBRACKET, Leaf, Leaf) ),
+                  Leaf ),
+              Leaf ),
+          Leaf ),
+      Leaf )
+
+let functiondec =
+  Node
+    ( Tokens.FUNCTION,
+      Node
+        ( Tokens.IDENT "",
+          Node
+            ( Tokens.LEFTPAREN,
+              Node
+                ( Tokens.IDENT "",
+                  Node
+                    ( Tokens.COLON,
+                      Node
+                        ( Tokens.TYP Tokens.ANY,
+                          Node
+                            ( Tokens.RIGHTPAREN,
+                              Node
+                                ( Tokens.COLON,
+                                  Node
+                                    ( Tokens.TYP Tokens.ANY,
+                                      Node (Tokens.RIGHTBRACKET, Leaf, Leaf),
+                                      Leaf ),
+                                  Leaf ),
+                              Node (Tokens.RIGHTBRACKET, Leaf, Leaf) ),
+                          Leaf ),
+                      Leaf ),
+                  Node
+                    ( Tokens.RIGHTPAREN,
+                      Node
+                        ( Tokens.COLON,
+                          Node
+                            ( Tokens.TYP Tokens.ANY,
+                              Node (Tokens.RIGHTBRACKET, Leaf, Leaf),
+                              Leaf ),
+                          Leaf ),
+                      Node (Tokens.RIGHTBRACKET, Leaf, Leaf) ) ),
+              Node
+                ( Tokens.RIGHTPAREN,
+                  Node
+                    ( Tokens.COLON,
+                      Node
+                        ( Tokens.TYP Tokens.ANY,
+                          Node (Tokens.RIGHTBRACKET, Leaf, Leaf),
+                          Leaf ),
+                      Leaf ),
+                  Node (Tokens.RIGHTBRACKET, Leaf, Leaf) ) ),
+          Leaf ),
+      Leaf )
+
+(*
+let treeify t = 
+    let rec aux lst tr =
+    match lst with
+    | [] -> tr
+    | h :: t -> match h with
+        k
+*)

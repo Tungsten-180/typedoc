@@ -1,0 +1,4 @@
+(executable
+ (public_name typedoc)
+ (name main)
+ (libraries typedoc base batteries))
