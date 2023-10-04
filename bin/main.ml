@@ -3,43 +3,48 @@ let lex str =
   let l = Typedoc.Lexer.advance k in
   Typedoc.Lexer.get_tokens l
 
-let test = function
-  | Typedoc.Tokens.IDENT s ->
-      print_endline "IDENT";
-      print_endline s
-  | Typedoc.Tokens.ILLEGAL s ->
-      print_endline "ILLEGAL";
-      print_endline s
-  | Typedoc.Tokens.VAR -> print_endline "VAR"
-  | Typedoc.Tokens.LET -> print_endline "LET"
-  | Typedoc.Tokens.CONST -> print_endline "CONST"
-  | Typedoc.Tokens.TYPE -> print_endline "TYPE"
-  | Typedoc.Tokens.CLASS -> print_endline "CLASS"
-  | Typedoc.Tokens.FUNCTION -> print_endline "FUNCTION"
-  | Typedoc.Tokens.LEFTBRACKET -> print_endline "LEFTBRACKET"
-  | Typedoc.Tokens.RIGHTBRACKET -> print_endline "RIGHTBRACKET"
-  | Typedoc.Tokens.LEFTBRACE -> print_endline "LEFTBRACE"
-  | Typedoc.Tokens.RIGHTBRACE -> print_endline "RIGHTBRACE"
-  | Typedoc.Tokens.LEFTPAREN -> print_endline "LEFTPAREN"
-  | Typedoc.Tokens.RIGHTPAREN -> print_endline "RIGHTPAREN"
-  | Typedoc.Tokens.PIPE -> print_endline "PIPE"
-  | Typedoc.Tokens.EQUAL -> print_endline "EQUAL"
-  | Typedoc.Tokens.COLON -> print_endline "COLON"
-  | Typedoc.Tokens.SEMICOLON -> print_endline "SEMICOLON"
-  | Typedoc.Tokens.TYP _ -> print_endline "Type"
-  | Typedoc.Tokens.VAL _ -> print_endline "Value"
-
 let rec print = function
   | [] -> ()
   | h :: t ->
-      let _ = test h in
+      let a, _ = Typedoc.Tokens.token_as_str h in
+      print_endline a;
       print t
 
-let () = print (lex "type cool = number | string;")
+let rec go lst =
+  match lst with
+  | [] -> ()
+  | h :: t -> (
+      match h with
+      | Typedoc.Analyzer.PAREN l
+      | Typedoc.Analyzer.BRACE l
+      | Typedoc.Analyzer.BRACKET l ->
+          let () = go l in
+          go t
+      | _ ->
+          let a, b = Typedoc.Analyzer.print_block h in
+          print_endline (Base.Printf.sprintf "%s %s" a b);
+          go t)
+
+let cool = lex "type cool = number | string;"
+let () = print cool
 let () = print_newline ()
 let () = print_endline "----------------"
 let () = print_newline ()
-let () = print (lex "function cool(question:number):number{\n}")
+let f = lex "function cool(question:number):number{\n}"
+let () = print f
+let () = print_newline ()
+let () = print_endline "----------------"
+let () = print_newline ()
+let blcks = Typedoc.Analyzer.get_blocks cool
+let () = go blcks
+(*
+let () = print_newline ()
+let () = print_endline "----------------"
+let () = print_newline ()
+let blks = Typedoc.Analyzer.get_blocks f
+let () = go blks
+*)
+
 (*
 let () =
   print

@@ -49,13 +49,13 @@ let rec next_token lexer =
         match lex.ch with
         | None -> (lex, None)
         | Some ch when is_whitespace ch -> next_token (skip_whitespace lex)
-        | Some ch when Tokens.is_symbol ch ->
+        | Some ch when Tokens.char_symbol ch ->
             (advance lex, Some (Tokens.tokenize (Tokens.CHAR ch)))
         | Some ch -> aux (advance lex) (ch :: temporary) BUILDING)
     | BUILDING -> (
         match lex.ch with
         | None -> (lex, None)
-        | Some ch when is_whitespace ch || Tokens.is_symbol ch ->
+        | Some ch when is_whitespace ch || Tokens.char_symbol ch ->
             ( skip_whitespace lex,
               Some
                 (Tokens.tokenize
